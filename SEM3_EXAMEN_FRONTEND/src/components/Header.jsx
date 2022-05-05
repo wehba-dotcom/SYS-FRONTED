@@ -23,6 +23,8 @@ function Header({ facade, loggedIn }) {
           <li><NavLink activeClassName="active" to="/AddTrip"> AddTrip</NavLink></li>
         )}
          <li><NavLink  activeClassName="active" to="/signin">SignIn</NavLink></li>
+    
+         <li> <NavLink exact activeClassName="active" to="/MyPage"> MyPage </NavLink></li>
       </ul>
     </div>
   );

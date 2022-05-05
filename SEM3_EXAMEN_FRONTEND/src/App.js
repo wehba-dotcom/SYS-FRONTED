@@ -9,6 +9,7 @@ import AddTrip from './components/AddTrip.jsx';
 import SignIn from './components/SignIn';
 import NoMatch from './components/NoMatch.jsx';
 import facade from './apiFacade';
+import MyPage from './components/MyPage';
 import { Container, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
@@ -55,6 +56,10 @@ function App() {
           <Route path="/element3">
             {facade.hasUserAccess('user', loggedIn) && 
               <Element3 facade={facade} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />}
+          </Route>
+
+          <Route path="/MyPage">
+          < MyPage />
           </Route>
          
           <Route path="/modifytrip">
