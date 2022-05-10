@@ -17,6 +17,9 @@ export default function MyPage({ facade, setLoggedIn, setErrorMessage })
     }
 
 
+
+    
+
     return (
         <div style={{textAlign:"center"}}>
             <h2>Login</h2>
