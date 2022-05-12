@@ -1,4 +1,4 @@
-const URL1 = "http://localhost:8080/exam";
+const URL1 = "http://localhost:8080/SYS_4SEM_war_exploded";
 const URL2 = "http://localhost:8080/exam/api/trip/all";
 const URL3 = "http://localhost:8080/exama/pi/trip/count";
 const URL4 = "http://localhost:8080/exam/api/trip/add";
