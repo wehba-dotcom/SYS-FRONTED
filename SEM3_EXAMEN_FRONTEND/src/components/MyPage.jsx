@@ -16,14 +16,16 @@ useEffect(()=>{
 
     return(
         <div>
-            <p>All Courses Available</p>
+            <p>All customer courses</p>
         <table className="table table-striped">
         <thead>
             <tr>
                 <th>CustomerCourseId</th>
-                <th>AnsowrWrong</th>
+                <th>Title</th>
+                <th>AnswersWrong</th>
                 <th>FinshDate</th>
-               
+                <th>Customer</th>
+
             </tr>
         </thead>
         <tbody>
@@ -31,9 +33,12 @@ useEffect(()=>{
             
     {cc_course.map((course) => (<tr key={course.dto_cCID}>
         <td>{course.dto_cCID}</td>
+        <td>{course.dto_title}</td>
         <td>{course.dto_goal.answersWrong}</td>
         <td>{course.dto_goal.finishDate}</td>
-
+    
+        <td>{course.dto_Customer.id}</td>
+        
         
         </tr>))}
         </tbody>
