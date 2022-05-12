@@ -31,8 +31,8 @@ useEffect(()=>{
             
     {cc_course.map((course) => (<tr key={course.dto_cCID}>
         <td>{course.dto_cCID}</td>
-        <td>{course.dto_cCID.dto_goal.answersWrong}</td>
-       
+        <td>{course.dto_goal.answersWrong}</td>
+        <td>{course.dto_goal.finishDate}</td>
 
         
         </tr>))}
