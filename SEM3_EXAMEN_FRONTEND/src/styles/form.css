@@ -1,0 +1,13 @@
+
+.inputfield {
+    width: 125px;
+    height: 30px;
+    margin-bottom: 5px;
+  }
+
+.botton {
+    width: 125px;
+    border-radius: 25px;
+    background-color: lightblue;
+}
+

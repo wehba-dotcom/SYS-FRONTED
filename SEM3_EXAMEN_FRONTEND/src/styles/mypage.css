@@ -1,0 +1,17 @@
+.myGoalTableContent {
+  text-align:  center;
+  width: 250px;
+  
+  }
+
+  .tablediv{
+    margin-left: 250px;
+    margin-right: 250px;  
+
+  }
+
+  .border{
+      border: 1px solid;
+      border-color: black;
+      
+  }
