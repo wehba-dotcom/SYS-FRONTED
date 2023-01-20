@@ -1,0 +1,108 @@
+const URL = "https://central.brkint.dk/api/dhcp/user";
+
+ 
+function handleHttpErrors(res) {
+ if (!res.ok) {
+   return Promise.reject({ status: res.status, fullError: res.json() })
+ }
+ return res.json();
+}
+ 
+function apiFacade() {
+
+    const setToken = (token) => {
+        localStorage.setItem('jwtToken', token)
+      }
+    const getToken = () => {
+      return localStorage.getItem('jwtToken')
+    }
+    const loggedIn = () => {
+      const loggedIn = getToken() != null;
+      return loggedIn;
+    }
+    const logout = () => {
+      localStorage.removeItem("jwtToken");
+    }
+    
+
+const login = (login_name, password) => {
+
+    const options1 = options("POST",{login_name: login_name, password: password });
+    return fetch(URL + "/login", options1)
+  
+  }
+
+
+const createUser= (login_name,password) => {
+  const options1 = options("POST",{login_name: login_name, password: password });
+  return fetch(URL, options1)
+ }
+
+
+const fetchData = (endpoint, updateAction) =>
+    {
+        const options = makeOptions("GET", true); //True add's the token
+        return fetch(URL + "/api/" + endpoint, options)
+            .then(handleHttpErrors)
+            .then((data) => updateAction(data))
+    }
+    var options = {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Host': 'central.brkint.dk',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoid2Voa28iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9oYXNoIjoiZmVmMzA5NDYtZmZhYy00YmRlLThhMTktYWI5ZmQyMGJhNzBiIiwic3ViIjoiUG93ZXJTaGVsbFVuaXZlcnNhbCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJXZWJ0b29sc19Vc2VyIiwiUmVhZGVyIiwiT3BlcmF0b3IiXSwibmJmIjoxNjYwODEzNDIxLCJleHAiOjE2OTIzNDk0MjEsImlzcyI6Iklyb25tYW5Tb2Z0d2FyZSIsImF1ZCI6IlBvd2VyU2hlbGxVbml2ZXJzYWwifQ.e-wPmHX19HBQdmbEXesQ8JOZI56qKnhjzPw7VdxY0k8',
+      }
+    }
+
+const makeOptions= (method,body) =>{
+   var opts = {
+     method: method,
+     headers: {
+       "Content-type": "application/json",
+       'Accept': 'application/json',
+     }
+   }
+  
+   if (body) {
+     opts.body = JSON.stringify(body);
+   }
+   return opts;
+ }
+
+ const getUserRoles = () =>
+    {
+        const token = getToken()
+        if (token != null)
+        {
+            const payloadBase64 = getToken().split('.')[1]
+            const decodedClaims = JSON.parse(window.atob(payloadBase64))
+            const roles = decodedClaims.roles
+            return roles
+        } else return ""
+    }
+
+    const hasUserAccess = (neededRole, loggedIn) =>
+    {
+        const roles = getUserRoles().split(',')
+        return loggedIn && roles.includes(neededRole)
+    }
+
+
+ return {
+     makeOptions,
+     options,
+     setToken,
+     getToken,
+     getUserRoles,
+     hasUserAccess,
+     createUser,
+     loggedIn,
+     login,
+     logout,
+     fetchData,
+ }
+}
+const facade = apiFacade();
+export default facade;

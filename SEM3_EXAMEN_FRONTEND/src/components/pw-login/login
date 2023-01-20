@@ -1,0 +1,60 @@
+
+# Enter your script to process requests.
+
+$ConnectionString = $BRK_DHCP_ConnectionString
+    $findQuery = @"
+select * from [BRK_DHCP].[dbo].[users]
+where login_name=@login_name and password=@password
+"@
+    try {
+        # Parse Body
+        $dhcpUser = ConvertFrom-Json $Body
+        If($dhcpUser.psobject.Properties['login_name'] -eq $null) { New-PSUApiResponse -Body $([PSCustomObject]@{Error = 'NAME parameter not supplied'} | ConvertTo-Json) -StatusCode 400}
+        If($dhcpUser.psobject.Properties['password'] -eq $null) { New-PSUApiResponse -Body $([PSCustomObject]@{Error = 'password parameter not supplied'} | ConvertTo-Json) -StatusCode 400}
+        
+
+        $connection = New-Object System.Data.SqlClient.SqlConnection
+        $connection.ConnectionString = $ConnectionString
+        $connection.Open()
+
+        # Prepare SQL Statement
+
+        $command = New-Object System.Data.SQLClient.SQLCommand
+        $command.Connection = $connection
+        $paramloginname = New-Object Data.SqlClient.SqlParameter("@login_name",[Data.SQLDBType]::NVARCHAR)
+        $paramloginname.Value = $dhcpUser.login_name
+        $parampassword = New-Object Data.SqlClient.SqlParameter("@password",[Data.SQLDBType]::NVARCHAR)
+        $parampassword.Value = $dhcpuser.password
+       
+
+        $command.Parameters.Add($paramloginname) | Out-Null
+        $command.Parameters.Add($parampassword) | Out-Null
+       
+
+        $command.CommandText = $findQuery
+        
+        $reader = $command.ExecuteReader()
+        while ($reader.Read()) {
+            $return = [PSCustomObject]@{
+                Id          = $reader['ID']
+                Login_name        = $reader['Login_name']
+                Is_admin         = $reader['Is_admin']
+            }
+        }
+
+        #$command.ExecuteNonQuery() | Out-Null
+        # $result = $command.ExecuteScalar()
+        # Write-Information $result
+    }
+    catch {
+        New-PSUApiResponse -StatusCode 500
+    }
+    finally {
+        if(!$connection.State -eq "Closed" -and $null -ne $connection) {
+            $connection.Dispose()
+            $connection = $null
+        }
+        $command.Dispose()
+        $command = $null
+    }
+    $return

@@ -1,0 +1,22 @@
+  <BrowserRouter>
+
+
+           <Route exact path="/" component={Home}/>
+         
+           <Route path="/reservations"  component={Reservations}/>
+           <Route  path="/allscopes"  component={Allscopes}/>
+           <Route  path="/nomatch"  component={NoMatch}/>
+          <Route path="/scopes" component={Scopes}/>
+          <Route path="/find_scope" component={Find_Scope}/>
+          <Route path="/scope" component={Scope}/>
+         <Route path="/leases" component={Leases}/>
+         <Route path="/find_reservation" component={Find_Reservation}/>
+          <Route path="/card1" component={Card1}/>
+          <Route path="/revistion" component={Revistion}/>
+          <Route path="/leasing" component={Leasing}/>
+          <Route path="/allleases" component={Allleases} />
+          <Route path="/find_leases" component={Find_Leases}/>
+          <Route path="/ headheader" component={ Headheader}/>
+          <Route path="/about" component={About}/>
+   
+ </BrowserRouter>

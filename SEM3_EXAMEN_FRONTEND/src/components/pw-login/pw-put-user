@@ -1,0 +1,64 @@
+
+# Enter your script to process requests.
+
+$ConnectionString = $BRK_DHCP_ConnectionString
+    $updateQuery = @"
+UPDATE [BRK_DHCP].[dbo].[users]
+    SET
+         login_name = @login_name
+        ,password = @password
+        ,is_admin = @is_admin
+    WHERE ID = @ID
+"@
+    try {
+        # Parse Body
+        $WebLink = ConvertFrom-Json $Body
+        If($WebLink.psobject.Properties['id'] -eq $null) { New-PSUApiResponse -Body $([PSCustomObject]@{Error = 'Id parameter not supplied'} | ConvertTo-Json) -StatusCode 400}
+        If($WebLink.psobject.Properties['login_name'] -eq $null) { New-PSUApiResponse -Body $([PSCustomObject]@{Error = 'Name parameter not supplied'} | ConvertTo-Json) -StatusCode 400}
+        If($WebLink.psobject.Properties['password'] -eq $null) { New-PSUApiResponse -Body $([PSCustomObject]@{Error = 'password parameter not supplied'} | ConvertTo-Json) -StatusCode 400}
+        If($WebLink.psobject.Properties['is_admin'] -eq $null) { New-PSUApiResponse -Body $([PSCustomObject]@{Error = 'is_admin parameter not supplied'} | ConvertTo-Json) -StatusCode 400}
+
+        $connection = New-Object System.Data.SqlClient.SqlConnection
+        $connection.ConnectionString = $ConnectionString
+        $connection.Open()
+
+        # Prepare SQL Statement
+
+        $command = New-Object System.Data.SQLClient.SQLCommand
+        $command.Connection = $connection
+        $paramId = New-Object Data.SqlClient.SqlParameter("@ID",[Data.SQLDBType]::Int)
+        $paramId.Value = $WebLink.Id
+        $paramName = New-Object Data.SqlClient.SqlParameter("@login_name",[Data.SQLDBType]::NText)
+        $paramName.Value = $WebLink.login_name
+        $paramPassword = New-Object Data.SqlClient.SqlParameter("@password",[Data.SQLDBType]::NText)
+        $paramPassword.Value = $WebLink.password
+        $paramAdmin = New-Object Data.SqlClient.SqlParameter("@is_admin",[Data.SQLDBType]::BOOLEAN)
+        $paramAdmin.Value = $WebLink.is_admin
+
+        $command.Parameters.Add($paramId) | Out-Null
+        $command.Parameters.Add($paramName) | Out-Null
+        $command.Parameters.Add($paramPassword) | Out-Null
+        $command.Parameters.Add($paramAdmin) | Out-Null
+
+        $command.CommandText = $updateQuery
+
+        $result = $command.ExecuteNonQuery()
+
+    }
+    catch {
+        New-PSUApiResponse -StatusCode 500
+    }
+    finally {
+        if(!$connection.State -eq "Closed" -and $null -ne $connection) {
+            $connection.Dispose()
+            $connection = $null
+        }
+        $command.Dispose()
+        $command = $null
+    }
+    If($result -eq 0) {
+        New-PSUApiResponse -StatusCode 404
+    } 
+    If($result -eq 1) {
+        New-PSUApiResponse -StatusCode 200 -Body $($WebLink | ConvertTo-Json)
+    }

@@ -1,33 +1,36 @@
 
 import React from 'react';
+import Card1 from './Card1';
+import Body from './Body';
+import { useHistory } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+
+
 function Home( ) {
-  
+  const history = useHistory()
   return (
-    <div style={{textAlign:'center', margin:'20px',backgroundColor:'lightgreen'}}>
-      <h2>Basic course - Set Goals </h2>
-     
+    <div>
       
-        <ul style={{ listStyleType: "none"}}>
-          <li>Primary actor: Customer
-              Secondary actor: System </li>
-              <br></br>
-          <li>precondition: customer is registered and signed in.</li>
-          <br></br>
-          <li style={{textAlign: "left"}}>
+    <Body/>
+    <div className="row">
      
-When the customer is on the "Home" page, the customer clicks on "My Page" in the navigation bar, the system forwards the customer to his/hers personal page. 
+    <Card1 name="Scope" description="DHCP scopes in the network of BRK" see={<Button variant="secondary" style={{
+        backgroundColor: 'grey'
+        
+      }} onClick={()=> history.push("/find_scope") } >Go TO Scopes !</Button>} />
 
-On "My Page" the system gives the customer the opportunity to set goals for each of the courses with an active license. 
-  </li>
-  <br></br>
-
-    <li style={{textAlign: "left"}}>The customer can choose to set a "MAX questions answered wrong" by using a dropdown menu, and the 
-
-customer can choose to set a "date to be finished with the course" by using a calender. when the customer has entered the wished goals, the customer can press the "Set goal for this course " button. The system sets the goals in the database and display the goals in the Goal field for the given course.</li>
-
-
-        </ul>
+    <Card1 name="Revistion" see={<Button variant="secondary" style={{
+        backgroundColor: 'grey' 
+        
+      }} onClick={()=> history.push("/find_reservation") } >Go TO Reservations !</Button>} description="Reservations related to all DHCP scopes"/>
+    <Card1 name="leases" see={<Button variant="secondary" style={{
+        backgroundColor: 'grey'
+        
+      }} onClick={()=> history.push("/find_leases") } >Go TO leases !</Button>} description="Active and inactive leases- DHCP scopes" />
     </div>
+    
+    </div>
+   
   );
 }
 

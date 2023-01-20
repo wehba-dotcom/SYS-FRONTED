@@ -1,0 +1,43 @@
+
+# Enter your script to process requests.
+
+$ConnectionString = $BRK_DHCP_ConnectionString
+
+    $deleteQuery = @"
+DELETE FROM [BRK_DHCP].[dbo].[users]
+    WHERE ID = @ID
+"@
+    try {
+        $connection = New-Object System.Data.SqlClient.SqlConnection
+        $connection.ConnectionString = $ConnectionString
+        $connection.Open()
+
+        # Prepare SQL Statement
+
+        $command = New-Object System.Data.SQLClient.SQLCommand
+        $command.Connection = $connection
+        $paramId = New-Object Data.SqlClient.SqlParameter("@ID",[Data.SQLDBType]::Int)
+        $paramId.Value = $Id
+        $command.Parameters.Add($paramId) | Out-Null
+
+        $command.CommandText = $deleteQuery
+
+        $result = $command.ExecuteNonQuery()
+    }
+    catch {
+        New-PSUApiResponse -StatusCode 500
+    }
+    finally {
+        if(!$connection.State -eq "Closed" -and $null -ne $connection) {
+            $connection.Dispose()
+            $connection = $null
+        }
+        $command.Dispose()
+        $command = $null
+    }
+    If($result -eq 0) {
+        New-PSUApiResponse -StatusCode 404
+    } 
+    If($result -ge 1) {
+        New-PSUApiResponse -StatusCode 200
+    }

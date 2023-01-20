@@ -1,0 +1,52 @@
+
+# Enter your script to process requests.
+$ConnectionString = $BRK_DHCP_ConnectionString
+
+    $sqlQuery = @"
+SELECT
+     ID
+    ,login_name
+    ,password
+    ,is_admin
+    FROM [BRK_DHCP].[dbo].[users]
+    
+"@
+    $return = @()
+
+    try {
+        $connection = New-Object System.Data.SqlClient.SqlConnection
+        $connection.ConnectionString = $ConnectionString
+        $connection.Open()
+
+        # Prepare SQL Statement
+
+        $command = New-Object System.Data.SQLClient.SQLCommand
+        $command.Connection = $connection
+        $command.CommandText = $sqlQuery
+
+        $reader = $command.ExecuteReader()
+        while ($reader.Read()) {
+            $return += [PSCustomObject]@{
+                ID        = $reader['ID']
+                login_name        = $reader['login_name']
+                password         = $reader['password']
+                is_admin = $reader['is_admin']
+            }
+        }
+    }
+    catch {
+
+    }
+    finally {
+        if (!$reader.IsClosed -and $null -ne $reader) {
+            $reader.Dispose()
+            $reader = $null
+        }
+        if (!$connection.State -eq "Closed" -and $null -ne $connection) {
+            $connection.Dispose()
+            $connection = $null
+        }
+        $command.Dispose()
+        $command = $null
+    }
+    $return

@@ -1,2 +1,5 @@
-const URL1 = "http://localhost:8080/SYS_4SEM_war_exploded";
-export default URL1;
+const URL = "https://central.brkint.dk/api/user";
+const URL1 = "https://central.brkint.dk/api/allusers";
+const baseURL="https://central.brkint.dk/api/allusers/"
+
+export default (URL )

@@ -1,0 +1,107 @@
+
+# Enter your script to process requests.
+$ConnectionString = $BRK_DHCP_ConnectionString
+
+$sqlQuerySearch1 = @"
+SELECT TOP (1000) *
+  FROM [BRK_DHCP].[dbo].[DHCP_Scopes]
+  WHERE ScopeId  = @scopeid
+"@
+$sqlQuerySearch2= @"
+SELECT TOP (1000) *
+FROM [BRK_DHCP].[dbo].[DHCP_Scopes]
+WHERE Name = @Name
+"@
+$sqlQueryAll = @"
+SELECT TOP (1000) *
+FROM [BRK_DHCP].[dbo].[DHCP_Scopes]
+"@
+
+If ($scopeId ) {
+    $sqlQuery=$sqlQuerySearch1
+
+}elseif  ($Name){
+    $sqlquery= $sqlQuerySearch2
+    
+}else{
+    $sqlQuery=$sqlQueryAll
+}
+
+$return = @()
+
+try {
+    $command = New-Object System.Data.SQLClient.SQLCommand
+    $connection = New-Object System.Data.SqlClient.SqlConnection
+    $connection.ConnectionString = $ConnectionString
+    $connection.Open()
+
+    # Prepare SQL Statement
+    if($scopeId) {
+        # Write-Output $scopeId
+        $paramId = New-Object Data.SqlClient.SqlParameter("@scopeId",[Data.SQLDBType]::VarChar)
+        $paramId.Value = $scopeId
+        $command.Parameters.Add($paramId) | Out-Null
+    }if($name) {
+        # Write-Output $scopeId
+        $paramId = New-Object Data.SqlClient.SqlParameter("@Name",[Data.SQLDBType]::VarChar)
+        $paramId.Value = $Name
+        $command.Parameters.Add($paramId) | Out-Null
+    }
+
+    $command.Connection = $connection
+    $command.CommandText = $sqlQuery
+    
+    $reader = $command.ExecuteReader()
+    while ($reader.Read() ) {
+        $return += [PSCustomObject]@{
+            
+            ScopeId_Int = $reader["ScopeId_Int"]
+            ScopeId  =  $reader["ScopeId"]
+            SubnetMask = $reader["SubnetMask"]
+            SubnetMask_int = $reader["SubnetMask_int"]
+            StartRang = $reader["StartRange"]
+            StartRange_int  = $reader["StartRange_int"]
+            EndRange2  = $reader["EndRange2"]
+            EndRange_int  = $reader["EndRange_int"]
+            Description = $reader["Description"]
+            LeaseDuration = $reader["LeaseDuration"]
+            MaxBootpClients =  $reader["MaxBootpClients"]
+            Name   =  $reader["Name"]
+            NapEnable  =  $reader["NapEnable"]
+            NapProfile  =  $reader["NapProfile"]
+            State  =  $reader["State"]
+            SuperscopeName  =  $reader["SuperscopeName"]
+            Type =  $reader["Type"]
+            PSComputerNam =  $reader["PSComputerName"]
+            ToBeDeleted  =  $reader["ToBeDeleted"]
+            ScopeNetId =  $reader["ScopeNetId"]
+            ScopeId_bin =  $reader["ScopeId_bin"]
+            SubnetMask_bin  = $reader["SubnetMask_bin"]
+            StartRange_bin  = $reader["StartRange_bin"]
+            EndRange_bin = $reader["EndRange_bin"]
+            ScopeNetId_bin = $reader["ScopeNetId_bin"]
+            Activ_leases_refresh  = $reader["Activ_leases_refresh"]
+    
+           
+        }
+    }
+}
+catch {
+    New-PSUApiResponse -StatusCode 500
+}
+finally {
+    if (!$reader.IsClosed -and $null -ne $reader) {
+        $reader.Dispose()
+        $reader = $null
+    }
+    if (!$connection.State -eq "Closed" -and $null -ne $connection) {
+        $connection.Dispose()
+        $connection = $null
+    }
+    $command.Dispose()
+    $command = $null
+}
+If($null -eq $return) {
+    New-PSUApiResponse -StatusCode 404
+}
+$return

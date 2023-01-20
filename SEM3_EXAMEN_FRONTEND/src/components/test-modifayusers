@@ -1,0 +1,13 @@
+ <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body><div style={{textAlign:"center"}}>
+            <h2>Sign up</h2>
+            <form  >
+            <input type="text" ref={Id} className="form-control ml-2" placeholder="id"   /> <br /><br />
+          <input className="login-input"  type="password"  id="password" /> <br /><br />
+          <button className="login-btn" >Create</button>
+        </form>
+        </div></Modal.Body>
+      </Modal>
